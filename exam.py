@@ -109,6 +109,15 @@ def unique_passwords(websites):
     return temp_df
 
 
+def create_genre_group_val(row):
+    if 'pop' in row['genre']:
+        return 'pop'
+    elif 'hip hop' in row['genre']:
+        return 'hip hop'
+    else:
+        return 'other genre'
+
+
 def Q1():
     print("\n====================================================================")
     print("[Q1] Rastgele şifre oluşturma".upper())
@@ -180,6 +189,9 @@ def Q7():
 
 
 def Q8():
+    print("\n====================================================================")
+    print("[Q6] 'genre_group' oluştur".upper())
+    print("====================================================================\n")
     from matplotlib.lines import Line2D
     init()
     global ax
@@ -189,14 +201,11 @@ def Q8():
 
     fig2 = plt.figure(2)
     new_df = df
-    conditions = [
-        (new_df['genre'] == 'pop'),
-        (new_df['genre'] == 'hip hop'),
-        (new_df['genre'] != 'pop') | (new_df['genre'] != 'hip hop')
-    ]
 
-    values = ['pop', 'hip hop', 'other genre']
-    new_df['genre_group'] = np.select(conditions, values)
+    values = ['hip hop', 'other genre', 'pop']
+    new_df['genre_group'] = new_df.apply(create_genre_group_val, axis=1)
+
+    print(new_df.head(5))
     
     # print(len(new_df[new_df['genre_group'] == 'pop']))
     # print(len(new_df[new_df['genre_group'] == 'hip hop']))
@@ -206,13 +215,13 @@ def Q8():
     green = '#90ee90'
     blue = '#47a2fb'
     colors = {'hip hop':red, 'other genre': green, 'pop': blue}
-    labels, index = np.unique(df["genre_group"], return_inverse=True)
+    # labels, index = np.unique(df["genre_group"], return_inverse=True)
 
     ax.set_title('Danceability vs Popularity by Genre Group', loc='left')
     sc = ax.scatter(new_df['dnce'], new_df['pop'], marker='.', c=[colors[r] for r in new_df['genre_group']])
-    custom_lines = [Line2D([0], [0], color=blue, lw=4),
-                Line2D([0], [0], color=red, lw=4),
-                Line2D([0], [0], color=green, lw=4)]   
+    custom_lines = [Line2D([0], [0], color=red, lw=4),
+                Line2D([0], [0], color=green, lw=4),
+                Line2D([0], [0], color=blue, lw=4)]   
     ax.legend(custom_lines, values)
     
     for index, row in new_df.iterrows():
