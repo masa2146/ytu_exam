@@ -19,7 +19,10 @@ cmap = plt.cm.RdYlGn
 names = []
 
 
-def init():
+def init_annotate():
+    """
+    Initialize annotate to use matplotlib
+    """
     global fig
     global ax
     global annot
@@ -37,7 +40,9 @@ def init():
 
 
 def update_annot(ind):
-
+    """
+    Annotation update  when hover mouse
+    """
     pos = sc.get_offsets()[ind["ind"][0]]
     annot.xy = pos
     # data = [str(names[n]) for n in ind["ind"]]
@@ -50,6 +55,9 @@ def update_annot(ind):
 
 
 def hover(event):
+    """
+    Event tracking on mouse hover. This function will be triggered when there is a mouse cursor in any area.
+    """
     global coord
     global fig
     global annot
@@ -68,6 +76,9 @@ def hover(event):
 
 
 def generate_password():
+    """
+    Generate password according to properties given  in Q1
+    """
     numbers = ['0', '1', '2', '3', '4', '5'] 
     chars = ["A", "B", "C", "D", "E"]
     temp_passs = ""
@@ -84,6 +95,15 @@ def generate_password():
 
 
 def duplicated(list):
+    """
+    Get duplicate values in list
+
+    Args:
+        list (list): The given list
+
+    Returns:
+        list: Duplicate values
+    """
     u, c = np.unique(list, return_counts=True)
     dup = u[c > 1]
     return dup
@@ -95,6 +115,12 @@ def sum(dup):
 
 def unique_passwords(websites):
     """
+    Generate password for each one website
+    
+    Args:
+        websites (list): Websites list
+    Returns:
+        DataFrame: DataFrame contains website and It's password
     """
     temp_df = pd.DataFrame()
     password_list = []
@@ -110,6 +136,15 @@ def unique_passwords(websites):
 
 
 def create_genre_group_val(row):
+    """
+    Create genre group for dataframe according to 'genre' value
+
+    Args:
+        row (pandas.core.series.Series): Row of the dataframe
+
+    Returns:
+        [str]: genre group value
+    """
     if 'pop' in row['genre']:
         return 'pop'
     elif 'hip hop' in row['genre']:
@@ -180,6 +215,9 @@ def Q6():
 
 
 def Q7():
+    print("\n====================================================================")
+    print("[Q7] 'genre' Enerji Ortalaması Tablosu".upper())
+    print("====================================================================\n")
     global found_genres
     fig1 = plt.figure(1)
     dd = df.loc[df['genre'].isin(found_genres)]
@@ -190,10 +228,10 @@ def Q7():
 
 def Q8():
     print("\n====================================================================")
-    print("[Q6] 'genre_group' oluştur".upper())
+    print("[Q8] 'genre_group' oluştur".upper())
     print("====================================================================\n")
     from matplotlib.lines import Line2D
-    init()
+    init_annotate()
     global ax
     global fig
     global sc
