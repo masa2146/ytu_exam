@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt 
 from matplotlib.widgets import Cursor
-import seaborn as sns
+import random
+import array
 
 df = pd.read_csv("top10s.csv")
 found_genres = None
@@ -66,26 +67,107 @@ def hover(event):
                     fig.canvas.draw_idle()
 
 
+def generate_password():
+    numbers = ['0', '1', '2', '3', '4', '5'] 
+    chars = ["A", "B", "C", "D", "E"]
+    temp_passs = ""
+    temp_pass = ""
+
+    for i in range(4):
+        rand_num = random.choice(numbers)
+        temp_pass += temp_pass.join(rand_num)
+        # rand_chars = random.choice(chars)
+    for i in range(4):
+        rand_chars = random.choice(chars)
+        temp_passs += temp_passs.join(rand_chars)
+    return(temp_pass + "-" + temp_passs)
+
+
+def duplicated(list):
+    u, c = np.unique(list, return_counts=True)
+    dup = u[c > 1]
+    return dup
+
+
+def sum(dup):
+    return len(dup)
+
+
+def unique_passwords(websites):
+    """
+    """
+    temp_df = pd.DataFrame()
+    password_list = []
+
+    for website in websites:
+        password = generate_password()
+        while password in password_list:
+            password = generate_password()
+        password_list.append(password)
+        data = {"Website":website, "Password":password}
+        temp_df = temp_df.append(data, ignore_index=True)
+    return temp_df
+
+
+def Q1():
+    print("\n====================================================================")
+    print("[Q1] Rastgele şifre oluşturma".upper())
+    print("====================================================================\n")
+    print(generate_password())
+    print("\n====================================================================\n")
+
+
+def Q2():
+    print("\n====================================================================")
+    print("[Q2] Çoğaltılmış şifre sayısı".upper())
+    print("====================================================================\n")
+
+    pass_list = [generate_password() for _ in range(10000)]
+    print(sum(duplicated(pass_list)))
+    print("\n====================================================================\n")
+
+
+def Q3():
+    print("\n====================================================================")
+    print("[Q3] Web site ve şifresini oluşturma".upper())
+    print("====================================================================\n")
+    website_list = []
+
+    [website_list.append("Website_" + str(i)) for i in range(10000)]
+    passwords10000df = unique_passwords(website_list)
+    print(sum(duplicated(passwords10000df['Password'])))
+
+
 def Q4():
+    print("\n====================================================================")
+    print("[Q4] Herbir türde kaç şarkı var?".upper())
+    print("====================================================================\n")
     global df
     res = df.groupby('genre')['genre'].count().reset_index(name='count').sort_values(['count'], ascending=False).head(5)
     print(res)
 
 
 def Q5():
+    print("\n====================================================================")
+    print("[Q5] En populer sanatçılar".upper())
+    print("====================================================================\n")
     f = {'pop': 'mean', 'year':'count'}
     comp = df.groupby(['artist', 'year'], as_index=False).agg(f)
     comp = comp[comp['year'] >= 3]
     comp = comp[comp['pop'] > 75]
     res = comp.sort_values('pop', ascending=False)
+    res.rename(columns={'pop':'mean_popularity', 'year':'number_of_song'}, inplace=True)
     print(res)
 
 
 def Q6():
+    print("\n====================================================================")
+    print("[Q6] 2018-2019 en iyi 5 tür".upper())
+    print("====================================================================\n")
     global found_genres
     mask = (df['year'] > 2017) & (df['year'] <= 2019)
     found_genres = df.loc[mask]['genre'].drop_duplicates()
-    print(found_genres)
+    print(found_genres.head(5))
 
 
 def Q7():
@@ -113,12 +195,12 @@ def Q8():
         (new_df['genre'] != 'pop') | (new_df['genre'] != 'hip hop')
     ]
 
-    values = ['hip hop', 'other genre', 'pop']
+    values = ['pop', 'hip hop', 'other genre']
     new_df['genre_group'] = np.select(conditions, values)
     
-    print(len(new_df[new_df['genre_group'] == 'pop']))
-    print(len(new_df[new_df['genre_group'] == 'hip hop']))
-    print(len(new_df[new_df['genre_group'] == 'other genre']))
+    # print(len(new_df[new_df['genre_group'] == 'pop']))
+    # print(len(new_df[new_df['genre_group'] == 'hip hop']))
+    # print(len(new_df[new_df['genre_group'] == 'other genre']))
 
     red = '#F08080'
     green = '#90ee90'
@@ -126,10 +208,11 @@ def Q8():
     colors = {'hip hop':red, 'other genre': green, 'pop': blue}
     labels, index = np.unique(df["genre_group"], return_inverse=True)
 
+    ax.set_title('Danceability vs Popularity by Genre Group', loc='left')
     sc = ax.scatter(new_df['dnce'], new_df['pop'], marker='.', c=[colors[r] for r in new_df['genre_group']])
-    custom_lines = [Line2D([0], [0], color=red, lw=4),
-                Line2D([0], [0], color=green, lw=4),
-                Line2D([0], [0], color=blue, lw=4)]   
+    custom_lines = [Line2D([0], [0], color=blue, lw=4),
+                Line2D([0], [0], color=red, lw=4),
+                Line2D([0], [0], color=green, lw=4)]   
     ax.legend(custom_lines, values)
     
     for index, row in new_df.iterrows():
@@ -144,6 +227,9 @@ def Q8():
     fig.canvas.mpl_connect('motion_notify_event', hover)
 
 
+Q1()
+Q2()
+Q3()
 Q4()
 Q5()
 Q6()
