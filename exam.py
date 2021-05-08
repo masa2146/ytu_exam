@@ -21,7 +21,7 @@ names = []
 
 def init_annotate():
     """
-    Initialize annotate to use matplotlib
+    Matplotlib için işaretleyiciyi tanımlar. 
     """
     global fig
     global ax
@@ -41,7 +41,7 @@ def init_annotate():
 
 def update_annot(ind):
     """
-    Annotation update  when hover mouse
+    Mouse herhangi bir alanın üzerine geldiğinde o alana ait veriler getirilir ve işaretleyici o verilere göre güncellenir. 
     """
     pos = sc.get_offsets()[ind["ind"][0]]
     annot.xy = pos
@@ -56,7 +56,7 @@ def update_annot(ind):
 
 def hover(event):
     """
-    Event tracking on mouse hover. This function will be triggered when there is a mouse cursor in any area.
+    Bu fonksiyon, mouse imlecinin grafikte bir gezinme işlemi sırasında tetiklenir.
     """
     global coord
     global fig
@@ -183,6 +183,11 @@ def Q3():
 
 
 def Q4():
+    """
+    df.groupby('genre')['genre'].count(): Herbir müzik türünün kullanım sayısını getirir.
+    .reset_index(name='count'): Müzik türlerinin kullanım sayısı bulunduğunda bu sayıları gösterme için yeni bir sutun oluşur. Bu sutuna 'count' olarak adlandırıyoruz
+    .sort_values(['count'], ascending=False): Oluşturulan 'count' sutuna göre sıralama işlemi azalan sıralama işlemi(ascending=False azalan sıralamayı karşılar.) 
+    """
     print("\n====================================================================")
     print("[Q4] Herbir türde kaç şarkı var?".upper())
     print("====================================================================\n")
@@ -192,6 +197,13 @@ def Q4():
 
 
 def Q5():
+    """
+    df.groupby(['artist', 'year'], as_index=False): 'year' ve 'artist' sutunlarına göre gruplama işlemi yapıldı. 'as_index=False' gruplamadan sonra sutunların temiz gözükmesini sağlar.
+    .agg(f) ve  f = {'pop': 'mean', 'year':'count'}: bu işlemde 'pop' sutuna göre ortalama yapılacağı ve 'year' sutununa göre herbir 'year' değerinin kullanım sayısı alınacağı belirtilir.
+    comp[comp['year'] >= 3]: Toplam 'year' değeri 3'den büyük olanları getir.
+    comp[comp['pop'] > 75]: Ortalama 'pop' değeri 75'den büyük olanları getir
+    rename(columns={'pop':'mean_popularity', 'year':'number_of_song'}, inplace=True): 'pop' ve 'year' sutunlarının isimleriini değiştirme. inplace=True, değişikliği varolan değişkende uygular.
+    """
     print("\n====================================================================")
     print("[Q5] En populer sanatçılar".upper())
     print("====================================================================\n")
@@ -205,16 +217,27 @@ def Q5():
 
 
 def Q6():
+    """
+    (df['year'] > 2017) & (df['year'] <= 2019): 2017'den büyük 2019'a eşit ve küçük yılları getir.
+    df.loc[mask]['genre'].drop_duplicates(): Bulunan sonucun duplicate değerleri silinir. 
+    .head(8): ilk 8 değeri getirir.
+    """
     print("\n====================================================================")
-    print("[Q6] 2018-2019 en iyi 5 tür".upper())
+    print("[Q6] 2018-2019 top 8 tür".upper())
     print("====================================================================\n")
     global found_genres
     mask = (df['year'] > 2017) & (df['year'] <= 2019)
     found_genres = df.loc[mask]['genre'].drop_duplicates()
-    print(found_genres.head(5))
+    print(found_genres.head(8))
 
 
 def Q7():
+    """
+    df.loc[df['genre'].isin(found_genres)]: Q6'da bulunan müzik türlerine göre filtreleme yapılır.
+    dd.loc[(dd['year'] > 2017) & (dd['year'] <= 2019)]: 2017'den büyük 2019'a eşit ve küçük yılları getir.
+    dd.groupby('genre')['nrgy'].mean(): 'genre' sutununa göre 'nrgy' ortalaması bulunur.
+    plot.bar(title="2018-2019 Genre Energy Mean"): Görselleştirme işlemi
+    """
     print("\n====================================================================")
     print("[Q7] 'genre' Enerji Ortalaması Tablosu".upper())
     print("====================================================================\n")
@@ -241,6 +264,9 @@ def Q8():
     new_df = df
 
     values = ['hip hop', 'other genre', 'pop']
+
+    
+    # Herbir satırı kontrol ederek yeni bir sutun oluşturma işlemi gerçekleşir. create_genre_group_val bir fonsiyondur
     new_df['genre_group'] = new_df.apply(create_genre_group_val, axis=1)
 
     print(new_df.head(5))
@@ -249,6 +275,7 @@ def Q8():
     # print(len(new_df[new_df['genre_group'] == 'hip hop']))
     # print(len(new_df[new_df['genre_group'] == 'other genre']))
 
+    # Renk kodları tanımlandı ve bu kodlar 'genre_group' değerlerine göre atama yapıldı.  
     red = '#F08080'
     green = '#90ee90'
     blue = '#47a2fb'
@@ -262,6 +289,7 @@ def Q8():
                 Line2D([0], [0], color=blue, lw=4)]   
     ax.legend(custom_lines, values)
     
+    # Grafik üzerinde açıklaması gözükecek olan verileri tanımlar.
     for index, row in new_df.iterrows():
         d = {"dnce":str(row['dnce']), "pop":str(row['pop']), 'genre_group':row['genre_group'], 'artist':row['artist'], 'title':row['title'], 'year':str(row['year'])}
         names.append(d)
